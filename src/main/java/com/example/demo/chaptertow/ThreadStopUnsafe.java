@@ -61,6 +61,37 @@ public class ThreadStopUnsafe {
     }
 
     /**
+     * 正确退出线程的方法
+     */
+    public static class ChangeObjectThread2 extends Thread{
+        // 线程是否继续执行的标志位
+        volatile boolean stopme = false;
+        public void stopMe(){
+            stopme = true;
+        }
+        @Override
+        public void run() {
+            while (true){
+                if(stopme){
+                    System.out.println("exit by stop me");
+                    break;
+                }
+                synchronized (user){
+                    long v =  System.currentTimeMillis()/1000;
+                    user.setId(v);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    user.setName(v+"");
+                }
+                Thread.yield();
+            }
+        }
+    }
+
+    /**
      * 读取用户属性线程
      */
     public static class ReadObjectThread extends Thread{
